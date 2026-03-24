@@ -61,7 +61,7 @@ export default function Conditions() {
   ] : []
 
   return (
-    <div className="max-w-lg mx-auto px-4 pt-5">
+    <div className="max-w-6xl mx-auto px-4 pt-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold tracking-tight">
@@ -103,7 +103,9 @@ export default function Conditions() {
       )}
 
       {c && spot && (
-        <>
+        <div className="md:grid md:grid-cols-2 md:gap-6 md:items-start">
+          {/* LEFT column: hero card */}
+          <div>
           {/* Hero card */}
           <div className="rounded-2xl p-5 mb-4" style={{ background: 'var(--mid)', border: '1px solid var(--glass-b)' }}>
             {/* Top row: name + rating badge */}
@@ -161,9 +163,12 @@ export default function Conditions() {
               Source: {c.visibility.source} · Updated {new Date(c.observedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </p>
           </div>
+          </div>{/* end left column */}
 
+          {/* RIGHT column: metrics, forecast, depth */}
+          <div>
           {/* 4 metric cards */}
-          <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-3 mb-4">
             <MetricCard
               icon={<TempIcon />}
               label="Water Temp"
@@ -249,7 +254,8 @@ export default function Conditions() {
               })}
             </div>
           </div>
-        </>
+          </div>{/* end right column */}
+        </div>
       )}
     </div>
   )

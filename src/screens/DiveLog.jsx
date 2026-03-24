@@ -60,7 +60,7 @@ export default function DiveLog() {
     : null
 
   return (
-    <div className="max-w-lg mx-auto px-4 pt-5">
+    <div className="max-w-6xl mx-auto px-4 pt-5">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold tracking-tight">
           Dive<span style={{ color: 'var(--biolum)' }}>Line</span>

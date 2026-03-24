@@ -31,6 +31,111 @@ function Particles() {
   return <div ref={ref} style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }} />
 }
 
+function TunaBackground() {
+  const canvasRef = useRef(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d')
+
+    function resize() {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+    }
+    resize()
+    window.addEventListener('resize', resize)
+
+    const fishData = [
+      { x: window.innerWidth * 0.15, y: window.innerHeight * 0.25, vx: 0.7,   vy: 0.04,  phase: 0,   size: 1.0,  type: 'tuna'  },
+      { x: window.innerWidth * 0.65, y: window.innerHeight * 0.55, vx: -0.55, vy: 0.07,  phase: 2.1, size: 0.85, type: 'tuna'  },
+      { x: window.innerWidth * 0.45, y: window.innerHeight * 0.72, vx: 0.6,   vy: -0.05, phase: 4.2, size: 0.92, type: 'tuna'  },
+    ]
+
+    let t = 0
+    let animId
+
+    function drawTuna(x, y, facingRight, size) {
+      ctx.save()
+      ctx.translate(x, y)
+      if (!facingRight) ctx.scale(-1, 1)
+      ctx.scale(size, size)
+      ctx.fillStyle = 'rgba(0,229,200,1)'
+
+      // Body
+      ctx.beginPath()
+      ctx.moveTo(-52, 0)
+      ctx.bezierCurveTo(-35, -16, 20, -18, 48, 0)
+      ctx.bezierCurveTo(20, 18, -35, 16, -52, 0)
+      ctx.fill()
+
+      // Tail upper lobe
+      ctx.beginPath()
+      ctx.moveTo(-52, 0)
+      ctx.lineTo(-78, -26)
+      ctx.lineTo(-58, -3)
+      ctx.closePath()
+      ctx.fill()
+
+      // Tail lower lobe
+      ctx.beginPath()
+      ctx.moveTo(-52, 0)
+      ctx.lineTo(-78, 26)
+      ctx.lineTo(-58, 3)
+      ctx.closePath()
+      ctx.fill()
+
+      // Dorsal fin
+      ctx.beginPath()
+      ctx.moveTo(-22, -18)
+      ctx.lineTo(-4, -31)
+      ctx.lineTo(14, -18)
+      ctx.closePath()
+      ctx.fill()
+
+      // Pectoral fin
+      ctx.beginPath()
+      ctx.ellipse(8, 6, 18, 6, -0.35, 0, Math.PI * 2)
+      ctx.fill()
+
+      ctx.restore()
+    }
+
+    function tick() {
+      t += 0.012
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      for (const f of fishData) {
+        const margin = 120
+        f.x += f.vx
+        f.y += f.vy + Math.sin(t * 0.8 + f.phase) * 0.3
+
+        if (f.x < -margin) f.x = canvas.width + margin
+        if (f.x > canvas.width + margin) f.x = -margin
+        if (f.y < 80)                  { f.vy =  Math.abs(f.vy) }
+        if (f.y > canvas.height - 120) { f.vy = -Math.abs(f.vy) }
+
+        drawTuna(f.x, f.y, f.vx > 0, f.size)
+      }
+
+      animId = requestAnimationFrame(tick)
+    }
+
+    tick()
+
+    return () => {
+      cancelAnimationFrame(animId)
+      window.removeEventListener('resize', resize)
+    }
+  }, [])
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, opacity: 0.07 }}
+    />
+  )
+}
+
 export default function App() {
   const [tab, setTab] = useState('conditions')
 
@@ -48,6 +153,7 @@ export default function App() {
                           repeating-linear-gradient(3deg, #00e5c8 0, #00e5c8 1px, transparent 1px, transparent 60px)`,
       }} />
       <Particles />
+      <TunaBackground />
       <div className="flex-1 overflow-auto pb-20" style={{ position: 'relative', zIndex: 1 }}>
         {tab === 'conditions' && <Conditions />}
         {tab === 'map'        && <MapBuoys />}
