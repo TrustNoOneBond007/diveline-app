@@ -167,8 +167,9 @@ export default function Conditions() {
             <MetricCard
               icon={<TempIcon />}
               label="Water Temp"
-              value={`${c.waterTempF}`}
-              unit="°F"
+              value={c.waterTempF ?? '—'}
+              unit={c.waterTempF ? '°F' : ''}
+
               color="var(--blue)"
             />
             <MetricCard

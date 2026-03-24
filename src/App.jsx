@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Conditions from './screens/Conditions'
 import MapBuoys   from './screens/MapBuoys'
 import DiveLog    from './screens/DiveLog'
@@ -9,19 +9,53 @@ const TABS = [
   { id: 'log',        label: 'Dive Log',   icon: LogIcon  },
 ]
 
+function Particles() {
+  const ref = useRef(null)
+  useEffect(() => {
+    const container = ref.current
+    for (let i = 0; i < 20; i++) {
+      const p = document.createElement('div')
+      const s = Math.random() * 3 + 1
+      p.style.cssText = `
+        position:absolute; border-radius:50%;
+        background:rgba(0,229,200,0.5);
+        width:${s}px; height:${s}px;
+        left:${Math.random() * 100}%;
+        animation: drift ${9 + Math.random() * 14}s linear infinite;
+        animation-delay: ${-Math.random() * 20}s;
+        opacity: ${0.2 + Math.random() * 0.5};
+      `
+      container.appendChild(p)
+    }
+  }, [])
+  return <div ref={ref} style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }} />
+}
+
 export default function App() {
   const [tab, setTab] = useState('conditions')
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--abyss)' }}>
-      <div className="flex-1 overflow-auto pb-20">
+      {/* Background effects */}
+      <div style={{
+        position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0,
+        background: `radial-gradient(ellipse 60% 40% at 20% 10%, rgba(0,100,140,.18) 0%, transparent 70%),
+                     radial-gradient(ellipse 40% 60% at 80% 30%, rgba(0,80,120,.12) 0%, transparent 70%)`,
+      }} />
+      <div style={{
+        position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, opacity: 0.03,
+        backgroundImage: `repeating-linear-gradient(87deg, #00e5c8 0, #00e5c8 1px, transparent 1px, transparent 40px),
+                          repeating-linear-gradient(3deg, #00e5c8 0, #00e5c8 1px, transparent 1px, transparent 60px)`,
+      }} />
+      <Particles />
+      <div className="flex-1 overflow-auto pb-20" style={{ position: 'relative', zIndex: 1 }}>
         {tab === 'conditions' && <Conditions />}
         {tab === 'map'        && <MapBuoys />}
         {tab === 'log'        && <DiveLog />}
       </div>
 
       {/* Bottom nav */}
-      <nav className="fixed bottom-0 left-0 right-0 border-t flex" style={{ background: 'var(--deep)', borderColor: 'var(--glass-b)' }}>
+      <nav className="fixed bottom-0 left-0 right-0 border-t flex" style={{ background: 'var(--deep)', borderColor: 'var(--glass-b)', zIndex: 50 }}>
         {TABS.map(({ id, label, icon: Icon }) => {
           const active = tab === id
           return (
